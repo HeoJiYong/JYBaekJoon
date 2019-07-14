@@ -20,13 +20,13 @@ int main()
 	{
 		cin >> xy[i];
 	}
-	sort(xy,xy+sensor);					//좌표정렬
+	sort(xy, xy + sensor);					//좌표정렬
 
 	for (int i = 0; i < sensor - 1; i++)	//센서끼리의 길이
 	{
 		length[i] = xy[i + 1] - xy[i];
 	}
-	sort(length, length + (sensor -1));		//길이 정렬
+	sort(length, length + (sensor - 1));		//길이 정렬
 
 	for (int i = 0; i < sensor - center; i++)	//길이가 큰것을 집중국 갯수만큼 제외하고 합침
 	{
