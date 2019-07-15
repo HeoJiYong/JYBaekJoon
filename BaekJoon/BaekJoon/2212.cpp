@@ -22,13 +22,13 @@ int main()
 	}
 	sort(xy, xy + sensor);					//좌표정렬
 
-	for (int i = 0; i < sensor - 1; i++)	//센서끼리의 길이
+	for (int i = 0; i < sensor - 1; i++)	//센서끼리의 거리
 	{
 		length[i] = xy[i + 1] - xy[i];
 	}
-	sort(length, length + (sensor - 1));		//길이 정렬
+	sort(length, length + (sensor - 1));		//거리 정렬
 
-	for (int i = 0; i < sensor - center; i++)	//길이가 큰것을 집중국 갯수만큼 제외하고 합침
+	for (int i = 0; i < sensor - center; i++)	//집중국 갯수만큼 빼고 거리합 구함
 	{
 		sum += length[i];
 	}
