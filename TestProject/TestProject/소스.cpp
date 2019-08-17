@@ -1,43 +1,56 @@
+/*
+2493
+스택
+시간초과
+*/
 #include <iostream>
-#include <algorithm>
-#include <deque>
+#include <stack>
 using namespace std;
-deque <pair<int,int>> mq;
-deque <pair<int,int>> tq;
 
-int init_q()
-{
-	while(!tq.empty()){
-		mq.push_back(tq.front());
-		tq.pop_front();
+stack<pair<int, int>> st;
+stack<pair<int, int>> stemp;
+
+int retIndex() {
+	pair <int, int>p;
+	p = st.top();
+	st.pop();
+	while (!st.empty()) {
+		if (p.first < st.top().first) {
+			return st.top().second;
+		}
+		stemp.push(st.top());
+		st.pop();
 	}
 	return 0;
 }
+int rollBack() {
+	while (!stemp.empty()) {
+		st.push(stemp.top());
+		stemp.pop();
+	}
+	return 0;
+}
+
 int main()
 {
-	//freopen("input.txt","r",stdin);
+	//freopen("input.txt", "r", stdin);
 	int N;
-	int move;
-	pair<int, int>temp;
+	pair<int, int> buff;
+	stack <int> result;
 	cin >> N;
 	for (int i = 0; i < N; i++) {
-		cin >> temp.second;
-		temp.first = i + 1;
-		mq.push_back(temp);
+		cin >> buff.first;
+		buff.second = i + 1;
+		st.push(buff);
 	}
-
-	while (!mq.empty()){
-		cout << mq.front().first;
-		move = abs(mq.front().second) % mq.size()-1;
-		if ((mq.front().second) < 0)	move = mq.size()-1 - move;
-		mq.pop_front();
-		if (mq.empty())
-			break;
-		for (int i = 0; i < move; i++){
-			tq.push_back(mq.front());
-			mq.pop_front();
-		}
-		init_q();
+	/*검사*/
+	while (!st.empty()) {
+		result.push(retIndex());
+		rollBack();
+	}
+	while (!result.empty()) {
+		cout << result.top()<<" ";
+		result.pop();
 	}
 	return 0;
 }
