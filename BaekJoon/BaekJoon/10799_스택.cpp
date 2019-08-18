@@ -1,5 +1,6 @@
 /*
 	백준 10799 스택
+	쇠막대문제
 */
 
 #include <iostream>
@@ -32,7 +33,7 @@ int main()
 			}
 		}
 	}
-	result +=temp;
+	result += temp;
 	cout << result;
 	return 0;
 }
