@@ -1,38 +1,63 @@
-/*
-	백준 10799 스택
-*/
-
 #include <iostream>
-#include <stack>
-#include <string>
+#include <vector>
+#include <queue>
+#include <algorithm>
 using namespace std;
-stack <char> st;
-string str;
-int main()
-{
-	//freopen("input.txt", "r", stdin);
-	int stick = 0, result = 0;
-	int temp = 0;
-	cin >> str;
-	for (int i = 0; i < str.length(); i++) {
-		if (str[i] == '(') {
-			st.push(str[i]);
-			stick++;
-		}
-		else if (str[i] == ')') {
-			stick--;
-			if (st.top() == '(') {
-				st.push(str[i]);
-				result = result + stick + temp;
-				temp = 0;
-			}
-			else if (st.top() == ')') {
-				st.push(str[i]);
-				temp++;
+
+class Graph {
+public:
+	int N; // 정점의 개수
+	vector<vector<int>> adj; // 인접 리스트
+
+	// 생성자
+	Graph() : N(0) {}	//생성과 동시에 만든다 -> 생성후 생성자호출까지 가지 않아도 됨 (?)
+	Graph(int n) : N(n) { adj.resize(N); }
+
+	// 간선 추가 함수
+	void addEdge(int u, int v) {
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+
+	// 모든 리스트의 인접한 정점 번호 정렬
+	void sortList() {
+		for (int i = 0; i < N; i++)
+			sort(adj[i].begin(), adj[i].end());
+	}
+
+	// 너비 우선 탐색
+	void bfs() {
+		vector<bool> visited(N, false); // 방문 여부를 저장하는 배열
+		queue<int> Q;
+		Q.push(0);
+		visited[0] = true;
+		// 탐색 시작
+		while (!Q.empty()) {
+			int curr = Q.front();
+			Q.pop();
+			cout << "node " << curr << " visited" << endl;
+			for (int next : adj[curr]) {
+				if (!visited[next]) {
+					visited[next] = true;
+					Q.push(next);
+				}
 			}
 		}
 	}
-	result +=temp;
-	cout << result;
-	return 0;
+};
+
+int main() {
+	Graph G(9);
+	G.addEdge(0, 1);
+	G.addEdge(0, 2);
+	G.addEdge(1, 3);
+	G.addEdge(1, 5);
+	G.addEdge(3, 4);
+	G.addEdge(4, 5);
+	G.addEdge(2, 6);
+	G.addEdge(2, 8);
+	G.addEdge(6, 7);
+	G.addEdge(6, 8);
+	G.sortList();
+	G.bfs();
 }

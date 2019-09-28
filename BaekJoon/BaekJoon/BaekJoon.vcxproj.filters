@@ -93,7 +93,10 @@
     <ClCompile Include="2493_스택.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="10799_스택.cpp">
+    <ClCompile Include="10799_스택_미완.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="2841_스택.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
