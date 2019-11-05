@@ -1,32 +1,35 @@
-/*
-	백준 13904
-	그리디
-*/
 #include <iostream>
-#include <algorithm>
-#include <queue>
+#include <vector>
 using namespace std;
-priority_queue <int> pq;
-pair <int, int> homework[1000];
-int n, sum, date;
+
 int main()
 {
-	cin >> n;
-	for (int i = 0; i < n; i++)
-		cin >> homework[i].first >> homework[i].second;
-	sort(homework, homework + n);
-	for (int i = 0; i < n; i++) {
-		if (date == homework[i].first) {
-			date--;
-			pq.pop();
+	vector<int> v;
+	int N, M;
+	int cur = 0;
+
+	scanf("%d", &N);
+	scanf("%d", &M);
+
+	if (1 <= M && M <= N && N <= 1000)	//조세퍼스 조건
+	{
+		for (int i = 0; i < N; i++)
+			v.push_back(i + 1);
+
+		printf("<");		// '<' 로시작
+		for (int i = 0; i < N - 1; i++) {
+			for (int j = 0; j < M - 1; j++) {
+				cur++;
+				v.push_back(v[cur - 1]);
+			}
+			printf("%d, ", v[cur]);
+			cur++;
 		}
-		pq.push(-homework[i].second);
-		date++;
+		for (int j = 0; j < M - 1; j++) {
+			cur++;
+			v.push_back(v[cur - 1]);
+		}
+		printf("%d>\n", v[cur]);
 	}
-	while (!pq.empty()) {
-		sum += (-pq.top());
-		pq.pop();
-	}
-	cout << sum;
 	return 0;
 }

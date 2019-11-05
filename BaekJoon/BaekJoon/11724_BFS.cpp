@@ -2,7 +2,6 @@
 #include <queue>
 #include <vector>
 using namespace std;
-
 vector<int> graph[1001];
 bool visited[1001];
 int cnt;
