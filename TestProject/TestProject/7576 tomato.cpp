@@ -1,76 +1,173 @@
-//2178 미로찾기
+//백준 5427불 틀림, 나중에 수정. 
 #include <iostream>
 #include <queue>
-#include <string>
+#include <string.h>
+
 using namespace std;
-
-int mx[] = {-1,0,1,0};
-int my[] = {0,1,0,-1};
-int map[101][101];
-
-struct node {
-	int x=0;
-	int y=0;
-	int count=1;
+struct DOT {
+	int x = 0;
+	int y = 0;
+	int count = 0;
 };
 
-int N, M;
-queue <node> q;
+DOT man;
+DOT fire;
+queue <DOT> fireq;
+int tc;
+int w, h;
+int mx[4] = { 0, 1, 0, -1 }, my[4] = { -1, 0, 1, 0 };
+char map[1001][1001];
+bool is_visit[1001][1001] = { false, };
+int fire_map[1001][1001] = { 0, };
 
-bool is_safe(int x, int y) {
-	return ((x >= 0) && (y >= 0) && (x < N) && (y < M));
+// # 벽, . 빈공간, @ 불, * 상근이
+
+//움직일 수 있는 범위인지
+bool is_in_map(int x, int y) {
+	return (x >= 0) && (y >= 0) && (x < w) && (y < h);
 }
 
-int bfs(){
-	int qsize = 0;
-	int x, y,count=1;
-	map[0][0] = 0;
-	while (!q.empty())
+//불의 맵 함수
+int get_fire_map() {
+
+	while (!fireq.empty())
 	{
-		qsize = q.size();
-		for (int i = 0; i < qsize; i++)
+		DOT cur = fireq.front();
+		is_visit[cur.y][cur.x] = true;
+
+		int nc = cur.count + 1;
+
+		for (int j = 0; j < 4; j++) //y
 		{
-			if ((q.front().x == N - 1) && (q.front().y == M - 1)) {
-				cout <<q.front().count;
-				return 0;
-			}
-			//큐 맨앞 노드 기준으로
-			//4방향 검사 (1. 안전한지 2.'1'인지 3.방문한적 있는지)
-			count =q.front().count;
-			for (int j = 0; j < 4; j++)
+			int nx = cur.x + mx[j];
+			int ny = cur.y + my[j];
+			if (is_in_map(nx, ny))
 			{
-				x = q.front().x + mx[j];
-				y = q.front().y + my[j];
-				if (is_safe(x ,y))
+				if (!is_visit[ny][nx])
 				{
-					if (map[x][y]==1)
+					if (map[ny][nx] != '#')
 					{
-						//위 검사 다 통과하면 해당 노드 큐에 삽입.
-						//(삽입시 x,y정보와 + 큐의 맨앞노드의 count+1한 값)
-						q.push({ x ,y ,count+1});
-						map[x][y] = 0;
+						fireq.push({ nx,ny,nc });
+						fire_map[ny][nx] = nc;
+						is_visit[ny][nx] = true;
 					}
 				}
 			}
-			q.pop();
 		}
+
+		fireq.pop();
 	}
+
+	//불의 맵 확인용 코드
+	/*for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
+		{
+			cout << fire_map[i][j];
+		}
+		cout << endl;
+	}
+	cout << "------------------\n";*/
+
+	//탐색범위
+	//움직일 수 있는 범위
+	//. 인지
+	// - 다음칸 값 > 다음칸 저장될 값
+	//	맵에 저장
 	return 0;
 }
 
-int main() 
+
+//사람 이동 함수
+int move_human()
 {
-	string temp;
-	q.push({});
-	cin >> N>> M;
-	for (int i = 0; i < N; i++)
-	{
-		temp = "";
-		cin >> temp;
-		for (int j = 0; j < M; j++)
-		{
-			map[i][j] = temp[j] - '0' ;
-		}
+	int min_count = 1000000;
+	for (int i = 0; i < 1001; i++){
+		memset(is_visit[i],false,1001);
 	}
-	bfs();
+
+	//탈출이 가능하다면 최소 이동수는 1, 따라서 0= 탈출 불가능
+	queue <DOT> hq;
+	hq.push(man);
+	while (!hq.empty())
+	{
+		DOT cur = hq.front();
+		int nc = cur.count + 1;
+		is_visit[cur.y][cur.x] = true;
+
+		for (int j = 0; j < 4; j++)
+		{
+			int nx = cur.x + mx[j];
+			int ny = cur.y + my[j];
+
+			if (is_in_map(nx, ny))
+			{
+				if (!is_visit[ny][nx])
+				{
+					if (nc < fire_map[ny][nx])
+					{
+						hq.push({ nx, ny,nc });
+						is_visit[ny][nx] = true;
+					}
+				}
+			}
+			//맵 밖이라면 혹싀 탈출인지 확인한다.
+			else
+			{
+				min_count = (min_count) > nc ? nc : min_count;
+			}
+		}
+		hq.pop();
+	}
+	return min_count == 1000000 ? 0 : min_count;
+}
+
+int main()
+{
+	cin >> tc;
+	char temp;
+	for (int i = 0; i < tc; i++)
+	{
+		cin >> w >> h;
+		for (int t = 0; t < 1001; t++)
+		{
+			memset(is_visit[t],false,1001);
+			memset(fire_map[t], 0, 1001);
+		}
+		//맵 초기화
+		for (int hi = 0; hi < h; hi++)
+		{
+			for (int wi = 0; wi < w; wi++)
+			{
+				cin >> temp;
+				//불 받았다면 큐에 저장 나중에 탐색하도록 만든다.
+				if (temp == '*')
+				{
+					fireq.push({ wi,hi,0 });
+					fire_map[hi][wi] = 1;
+				}
+				else if (temp == '@')
+				{
+					man.x = wi;
+					man.y = hi;
+					man.count = 0;
+				}
+				map[hi][wi] = temp;
+			}
+		}
+		get_fire_map();
+		if (int result = move_human())
+		{
+			cout << result<<"\n";
+		}
+		else
+		{
+			cout << "IMPOSSIBLE\n";
+		}
+		//불의 맵 만들기 위한 bfs -각 불씨하나마다의 방문 큐 하나씩 만들자.
+		//불씨가 두개 이상일 경우, (불의맵 숫자 > 다음 불씨숫자) 일때마다 방문
+		//숫자가 적힌 불의 맵에서 사람의 이동bfs (다음 이동수 < 불의 숫자) 일때마다 방문
+		//if 사람bfs 결과에따라 값반환
+	}
+	return 0;
 }
